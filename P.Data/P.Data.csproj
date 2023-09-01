@@ -78,6 +78,10 @@
     <Compile Include="Migrations\202308311035508_Initial.designer.cs">
       <DependentUpon>202308311035508_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202309011137197_Create-tables.cs" />
+    <Compile Include="Migrations\202309011137197_Create-tables.designer.cs">
+      <DependentUpon>202309011137197_Create-tables.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Layer.cs" />
     <Compile Include="Models\Log.cs" />
@@ -94,6 +98,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202308311035508_Initial.resx">
       <DependentUpon>202308311035508_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309011137197_Create-tables.resx">
+      <DependentUpon>202309011137197_Create-tables.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
