@@ -26,7 +26,7 @@ namespace P.Data.Models
         public DateTime LogDate { get; set; }
 
         [Required]
-        [DisplayName("FastTrak ID")]
+        [DisplayName("Job Number")]
         public string JobNumber { get; set; }
 
         [Required]
