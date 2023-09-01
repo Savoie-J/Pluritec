@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  SQLServer:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=SQLPassword123
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./Docker_Data:/var/opt/mssql/data
