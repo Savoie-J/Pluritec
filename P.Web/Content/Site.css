@@ -1,6 +1,10 @@
-﻿/* Set padding to keep content from hitting the edges */
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
 .body-content {
-    margin-top: 15px;
     padding-left: 15px;
     padding-right: 15px;
 }
@@ -17,4 +21,181 @@ input,
 select,
 textarea {
     max-width: 280px;
+}
+
+.no-border {
+    border: none;
+}
+
+.modal-dialog {
+    display: table;
+    overflow-y: auto;
+    overflow-x: auto;
+    width: auto;
+    min-width: 500px;
+}
+
+.mainbtn {
+    font-size: 20px;
+    color: #fff;
+    background-color: #000000;
+    border: solid #ffffff 2px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+    border-radius: 50px;
+    transition: 816ms;
+    transform: translateY(0);
+    cursor: pointer;
+    padding: 10px 40px;
+}
+
+    .mainbtn:hover {
+        transition: 816ms;
+        padding: 10px 80px;
+        transform: translateY(-0px);
+        background-color: #fff;
+        color: #000000;
+        border: solid 2px #000000;
+    }
+
+@media only screen and (max-width: 1000px) {
+    .largeScreen {
+        display: none !important;
+    }
+}
+
+.pre-nostyle {
+    background-color: inherit;
+    border: none;
+    font-family: inherit;
+    word-break: inherit;
+    margin: 0;
+    padding: 0;
+    white-space: pre-line;
+}
+
+.button-table {
+    align-self: center;
+    background-color: #fff;
+    background-image: none;
+    background-position: 0 90%;
+    background-repeat: repeat no-repeat;
+    background-size: 4px 3px;
+    border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
+    border-style: solid;
+    border-width: 2px;
+    box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
+    box-sizing: border-box;
+    border-color: rgba(0, 0, 0, .2);
+    color: #000000;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Neucha, sans-serif;
+    font-size: 1rem;
+    line-height: 23px;
+    outline: none;
+    padding: .75rem;
+    margin-bottom: 5px;
+    text-decoration: none;
+    transition: all 235ms ease-in-out;
+    border-bottom-left-radius: 15px 255px;
+    border-bottom-right-radius: 225px 15px;
+    border-top-left-radius: 255px 15px;
+    border-top-right-radius: 15px 225px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+    .button-table:hover {
+        box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
+        transform: translate3d(0, 2px, 0);
+    }
+
+    .button-table:focus {
+        box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
+    }
+
+.modal-body {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.required-field-label::after {
+    content: "*";
+    color: red;
+    margin-left: 3px;
+}
+
+.refresh {
+    position: relative;
+    transition: padding-right .3s ease-out;
+}
+
+    .refresh.loading {
+        padding-right: 40px;
+    }
+
+        .refresh.loading:after {
+            content: "";
+            position: absolute;
+            border-radius: 100%;
+            right: 6px;
+            top: 50%;
+            width: 0px;
+            height: 0px;
+            margin-top: -2px;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-left-color: #FFF;
+            border-top-color: #FFF;
+            animation: spin .6s infinite linear, grow .3s forwards ease-out;
+        }
+
+@keyframes spin {
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+@keyframes grow {
+    to {
+        width: 14px;
+        height: 14px;
+        margin-top: -8px;
+        right: 13px;
+    }
+}
+
+input[type="file"]::file-selector-button {
+    border-radius: 4px;
+    padding: 0 40px;
+    height: 35px;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
+    margin-right: 8px;
+    transition: background-color 200ms;
+}
+
+    input[type="file"]::file-selector-button:hover {
+        background-color: #f3f4f6;
+    }
+
+    input[type="file"]::file-selector-button:active {
+        background-color: #e5e7eb;
+        outline: none;
+    }
+
+input[type="file"]:visited {
+    outline: none;
+}
+
+input[type="file"]:focus {
+    outline: none;
+}
+
+.twoButtons {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 6px;
 }
