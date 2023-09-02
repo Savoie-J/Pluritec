@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using P.Data;
 using P.Data.Models;
+using P.Web.Business;
 using P.Web.Models;
 using System;
 using System.Collections.Generic;
@@ -64,9 +65,6 @@ namespace P.Web.Controllers
                     UploadGuid = Guid.NewGuid()
                 };
 
-                if (!saving.ValidOperator)
-                    return "Employee not found from EmployeeID.";
-
                 var fileCopy = MdbManager.SaveCopy(saving.UploadName, saving.FileName);
 
                 if (fileCopy == null)
@@ -96,8 +94,6 @@ namespace P.Web.Controllers
                 specification.Logs.Add(saving);
 
                 _sql.SaveChanges();
-
-                EmailContext.EmailAlert(_sql, saving);
 
                 return string.Empty;
             }
@@ -150,9 +146,6 @@ namespace P.Web.Controllers
                     LogDate = DateTime.Now,
                     UploadGuid = Guid.NewGuid()
                 };
-
-                if (!saving.ValidOperator)
-                    return "Employee not found from EmployeeID.";
 
                 var fileCopy = MdbManager.SaveCopy(manual.UploadedFile, saving.FileName);
 

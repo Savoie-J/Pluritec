@@ -11,6 +11,7 @@ namespace P.Web
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
                         "~/Scripts/DataTables/jquery.dataTables.js",
+                        "~/Scripts/moment.min.js",
                         "~/Scripts/DataTables/dataTables.bootstrap.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -27,7 +28,12 @@ namespace P.Web
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/DataTables/dataTables.bootstrap.css",
+                      "~/Content/jquery.tag-editor.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/tagEditor").Include(
+                      "~/Scripts/jquery.tag-editor.js",
+                      "~/Scripts/jquery.caret.min.js"));
         }
     }
 }

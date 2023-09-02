@@ -1,0 +1,6 @@
+﻿@model HttpPostedFileBase
+@{
+    var htmlAttributes = HtmlHelper.AnonymousObjectToHtmlAttributes(ViewData["htmlAttributes"]);
+    htmlAttributes["type"] = "file";
+}
+@Html.TextBoxFor(model => model, htmlAttributes)
