@@ -17,5 +17,6 @@ namespace P.Data
         private static ConnectionStringSettings SQLSettings => ConfigurationManager.ConnectionStrings[_env];
         public static string ConnectionString => SQLSettings.ConnectionString;
         public static string ProviderName => SQLSettings.ProviderName;
+        public static string FilePath => ConfigurationManager.AppSettings["FilePath"];
     }
 }
