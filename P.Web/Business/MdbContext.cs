@@ -13,7 +13,7 @@ namespace P.Web.Business
     {
         private readonly string _mdbFile;
 
-        private string ConnectionString => $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={_mdbFile}";
+        private string ConnectionString => $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={_mdbFile}";
 
         private readonly OleDbConnection _connection;
 

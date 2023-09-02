@@ -32,7 +32,7 @@ namespace P.Web.Business
         {
             return _remote
                 .GetFiles($"*{_extension}")
-                .Where(f => f.CreationTime >= DateTime.Today)
+                //.Where(f => f.CreationTime >= DateTime.Today)
                 .Select(f => new DataFile { FileName = f.Name, DateCreated = f.CreationTime })
                 .ToList();
         }

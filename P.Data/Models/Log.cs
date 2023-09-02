@@ -53,6 +53,10 @@ namespace P.Data.Models
         [JsonIgnore]
         public virtual List<SkippedSerialNumber> SkippedSerialNumbers { get; set; }
 
+        [NotMapped]
+        [DisplayName("Skipped Serial Numbers")]
+        public string FormattedSerialNumbers => string.Join(", ", this.SkippedSerialNumbers?.Select(s => s.SerialNumber));
+
         [JsonIgnore]
         public virtual List<Measurement> Measurements { get; set; }
 
@@ -63,16 +67,26 @@ namespace P.Data.Models
         [NotMapped]
         public string FileName => $"{this.LogDate:yyyy-MM-dd_HH.mm}_{this.UploadGuid}.mdb";
 
-        /*
-        [NotMapped]
-        public string OperatorName => AccountManagement.GetEmployeeName(this.Operator);
-
-        [NotMapped]
-        public bool ValidOperator => AccountManagement.ValidateEmployeeID(this.Operator);
-        */
-
         [NotMapped]
         [DisplayName("Skipped Serial Numbers")]
         public string SerialNumbers { get; set; }
+
+        [NotMapped]
+        public string StatusColor
+        {
+            get
+            {
+                if (!this.Measurements.Any())
+                    return "primary";
+
+                if (!this.Measurements.Any(m => m.HasMeasurements))
+                    return "warning";
+
+                if (this.Measurements.Any(m => m.HasMeasurements && !m.IsInSpecification()))
+                    return "danger";
+
+                return "success";
+            }
+        }
     }
 }

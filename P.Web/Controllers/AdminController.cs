@@ -87,5 +87,36 @@ namespace P.Web.Controllers
 
             return View(specification);
         }
+
+        public async Task<ActionResult> GetLog(int? id)
+        {
+            if (!id.HasValue)
+                return Json(new
+                {
+                    message = "Log not found."
+                }, JsonRequestBehavior.AllowGet);
+
+            Log log = await _sql.Logs.FindAsync(id);
+            if (log == null)
+                return Json(new
+                {
+                    message = "Log not found."
+                }, JsonRequestBehavior.AllowGet);
+
+            return Json(new
+            {
+                log = new
+                {
+                    log.ID,
+                    log.UploadName,
+                    log.PartNumber,
+                    log.JobNumber,
+                    log.SerialNumber,
+                    log.SerialNumbers,
+                    log.Comments,
+                },
+                skipped = log.SkippedSerialNumbers.Select(s => s.SerialNumber)
+            }, JsonRequestBehavior.AllowGet);
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace P.Web.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var logs = await _sql.Logs.Where(l => l.LogDate >= DateTime.Today).ToListAsync();
+            var logs = await _sql.Logs./*Where(l => l.LogDate >= DateTime.Today).*/ToListAsync();
 
             return View(logs);
         }

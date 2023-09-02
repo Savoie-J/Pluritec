@@ -9,3 +9,4 @@ services:
       - "1433:1433"
     volumes:
       - ./Docker_Data:/var/opt/mssql/data
+    container_name: sql_server

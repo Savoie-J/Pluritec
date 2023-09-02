@@ -18,19 +18,27 @@ namespace P.Data.Models
 
         public virtual Log Log { get; set; }
 
+
+
         public DateTime Time { get; set; }
 
         public virtual List<Layer> Layers { get; set; }
 
+
         [NotMapped]
-        public double Offset => this.Log.Specification.Offset ?? 0;
+        public Specification Specification => this.Log?.Specification;
+
         [NotMapped]
-        private int Layer1Num => this.Log?.Specification?.LayerOne ?? -1;
+        public double Offset => this.Specification.Offset ?? 0;
+
+        [NotMapped]
+        private int Layer1Num => this.Specification?.LayerOne ?? -1;
 
         [NotMapped]
         public Layer Layer1 => this.Layers.FirstOrDefault(l => l.NLayer == this.Layer1Num);
+
         [NotMapped]
-        private int Layer2Num => this.Log?.Specification?.LayerTwo ?? -1;
+        private int Layer2Num => this.Specification?.LayerTwo ?? -1;
 
         [NotMapped]
         public Layer Layer2 => this.Layers.FirstOrDefault(l => l.NLayer == this.Layer2Num);
@@ -69,5 +77,39 @@ namespace P.Data.Models
         [NotMapped]
         [DisplayName("Y22")]
         public double ABSposY22 => Math.Abs(this.Layer1.ABSposY22 - this.Layer2.ABSposY22) - this.Offset;
+
+        public bool IsInSpecification()
+        {
+            if (!this.Specification.IsSetup)
+                return true;
+
+            double tolerance = this.Specification.Tolerance.Value;
+
+            if (ABSposX11 > tolerance)
+                return false;
+
+            if (ABSposY11 > tolerance)
+                return false;
+
+            if (ABSposX12 > tolerance)
+                return false;
+
+            if (ABSposY12 > tolerance)
+                return false;
+
+            if (ABSposX21 > tolerance)
+                return false;
+
+            if (ABSposY21 > tolerance)
+                return false;
+
+            if (ABSposX22 > tolerance)
+                return false;
+
+            if (ABSposY22 > tolerance)
+                return false;
+
+            return true;
+        }
     }
 }
