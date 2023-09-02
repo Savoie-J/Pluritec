@@ -1,0 +1,618 @@
+﻿@using P.Data.Models;
+@using Newtonsoft.Json;
+@using P.Web.Models;
+
+@model List<Log>
+@{
+    ViewBag.Title = "Log Input";
+    Log log = new Log();
+    DataFile file = new DataFile();
+    CreateViewModel create = new CreateViewModel();
+    ManualViewModel manual = new ManualViewModel();
+}
+
+<style>
+    .tag-editor {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 4px 0 4px 0;
+    }
+</style>
+
+<h3 class="text-center">Recent Files</h3>
+
+<div class="twoButtons">
+    <button class="btn btn-default" id="btn-manual">Manual File Select</button>
+    <button class="refresh btn btn-primary">Refresh Files</button>
+</div>
+
+<table class="table table-striped table-bordered" id="file_table">
+    <thead>
+        <tr>
+            <th style="text-align: center">
+                @Html.DisplayNameFor(model => file.FileName)
+            </th>
+            <th style="text-align: center">
+                @Html.DisplayNameFor(model => file.DateCreated)
+            </th>
+            <th style="text-align: center">
+            </th>
+        </tr>
+    </thead>
+    <tbody style="text-align: center"></tbody>
+</table>
+
+<hr />
+
+<h3 style="text-align: center">Recent Entries</h3>
+<table class="table table-striped table-bordered" id="log_table">
+    <thead>
+        <tr>
+            <th style="text-align: center">
+                @Html.DisplayNameFor(model => log.LogDate)
+            </th>
+            <th style="text-align: center">
+                @Html.DisplayNameFor(model => log.UploadName)
+            </th>
+            <th style="text-align: center">
+                @Html.DisplayNameFor(model => log.PartNumber)
+            </th>
+            <th style="text-align: center">
+                @Html.DisplayNameFor(model => log.JobNumber)
+            </th>
+            <th style="text-align: center">
+                @Html.DisplayNameFor(model => log.SerialNumber)
+            </th>
+            <th style="text-align: center">
+                @Html.DisplayNameFor(model => log.Operator)
+            </th>
+            <th style="text-align: center">
+                @Html.DisplayNameFor(model => log.Comments)
+            </th>
+            <th style="text-align: center">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Log entry in Model)
+        {
+            string serialized = JsonConvert.SerializeObject(new
+            {
+                entry.ID,
+                LogDate = entry.LogDate.ToString("yyyy-MM-dd"),
+                entry.UploadName,
+                entry.PartNumber,
+                entry.JobNumber,
+                entry.SerialNumber,
+                entry.Operator,
+                entry.Comments
+            });
+
+            string skipped = JsonConvert.SerializeObject(entry.SkippedSerialNumbers.Select(s => s.SerialNumber));
+
+            <tr>
+                <td style="text-align: center; vertical-align: middle;" data-order="@entry.LogDate.ToString("yyyy-MM-dd HH:mm:ss")">
+                    @entry.LogDate.ToString("g")
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    @Html.DisplayFor(model => entry.UploadName)
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    @Html.DisplayFor(model => entry.PartNumber)
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    @Html.DisplayFor(model => entry.JobNumber)
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    @Html.DisplayFor(model => entry.SerialNumber)
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    @Html.DisplayFor(model => entry.OperatorName)
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    <pre class="pre-nostyle">@entry.Comments</pre>
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    <button type="button" class="btn-link log_edit" data-log='@Html.Raw(serialized)' data-skipped='@Html.Raw(skipped)'>Edit</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="create_modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">New Log Entry</h4>
+            </div>
+            <form id="create_form">
+                <div class="modal-body" style="padding-bottom: 0;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => create.SelectedFile, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => create.SelectedFile, new { htmlAttributes = new { @class = "form-control create_input", style = "width: 100%; max-width: 100%;", autocomplete = "off", @readonly = "true" } })
+                                @Html.ValidationMessageFor(model => create.SelectedFile, string.Empty, new { @class = "alert-danger create_validation" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => create.JobNumber, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => create.JobNumber, new { htmlAttributes = new { @class = "form-control create_input create_focus", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => create.JobNumber, string.Empty, new { @class = "alert-danger create_validation" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => create.EmployeeID, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => create.EmployeeID, new { htmlAttributes = new { @class = "form-control create_input", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => create.EmployeeID, string.Empty, new { @class = "alert-danger create_validation" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => create.SerialNumber, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => create.SerialNumber, new { htmlAttributes = new { @class = "form-control create_input", style = "width: 100%; max-width: 100%;", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => create.SerialNumber, string.Empty, new { @class = "alert-danger create_validation" })
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => create.SkippedSerialNumbers, new { @class = "control-label" })
+                                @Html.HiddenFor(model => create.SkippedSerialNumbers, new { @class = "create_input" })
+                                <textarea id="create_tagEditor" class="form-control"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => create.Comments, new { @class = "control-label" })
+                                @Html.TextAreaFor(model => create.Comments, new { @class = "form-control create_input", style = "width: 100%; max-width: 100%;", autocomplete = "off" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer no-border">
+                    <button type="submit" class="btn btn-default">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="manual_modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Manual Log Entry</h4>
+            </div>
+            <form id="manual_form" enctype="multipart/form-data">
+                <div class="modal-body" style="padding-bottom: 0;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => manual.UploadedFile, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => manual.UploadedFile, new { htmlAttributes = new { @class = "manual_input", style = "width: 100%; max-width: 100%;", autocomplete = "off", accept = ".mdb" } })
+                                @Html.ValidationMessageFor(model => manual.UploadedFile, string.Empty, new { @class = "alert-danger manual_validation" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => manual.JobNumber, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => manual.JobNumber, new { htmlAttributes = new { @class = "form-control manual_input", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => manual.JobNumber, string.Empty, new { @class = "alert-danger manual_validation" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => manual.EmployeeID, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => manual.EmployeeID, new { htmlAttributes = new { @class = "form-control manual_input", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => manual.EmployeeID, string.Empty, new { @class = "alert-danger manual_validation" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => manual.SerialNumber, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => manual.SerialNumber, new { htmlAttributes = new { @class = "form-control manual_input", style = "width: 100%; max-width: 100%;", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => manual.SerialNumber, string.Empty, new { @class = "alert-danger manual_validation" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => manual.SkippedSerialNumbers, new { @class = "control-label" })
+                                @Html.HiddenFor(model => manual.SkippedSerialNumbers, new { @class = "manual_input" })
+                                <textarea id="manual_tagEditor"></textarea>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => manual.Comments, new { @class = "control-label" })
+                                @Html.TextAreaFor(model => manual.Comments, new { @class = "form-control manual_input", style = "width: 100%; max-width: 100%;", autocomplete = "off" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer no-border">
+                    <button type="submit" class="btn btn-default">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="edit_modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Log Entry</h4>
+            </div>
+            <form id="edit_form">
+                <div class="modal-body" style="padding-bottom: 0;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => log.UploadName, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => log.UploadName, new { htmlAttributes = new { @class = "form-control edit_input", autocomplete = "off", @readonly = "true" } })
+                                @Html.ValidationMessageFor(model => log.UploadName, string.Empty, new { @class = "alert-danger edit_validation" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => log.JobNumber, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => log.JobNumber, new { htmlAttributes = new { @class = "form-control edit_input", autocomplete = "off", @readonly = "true" } })
+                                @Html.ValidationMessageFor(model => log.JobNumber, string.Empty, new { @class = "alert-danger edit_validation" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => log.Operator, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => log.Operator, new { htmlAttributes = new { @class = "form-control edit_input", autocomplete = "off", @readonly = "true" } })
+                                @Html.ValidationMessageFor(model => log.Operator, string.Empty, new { @class = "alert-danger edit_validation" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => log.PartNumber, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => log.PartNumber, new { htmlAttributes = new { @class = "form-control edit_input", autocomplete = "off", @readonly = "true" } })
+                                @Html.ValidationMessageFor(model => log.PartNumber, string.Empty, new { @class = "alert-danger edit_validation" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => log.SerialNumber, new { @class = "control-label required-field-label" })
+                                @Html.EditorFor(model => log.SerialNumber, new { htmlAttributes = new { @class = "form-control edit_input", style = "width: 100%; max-width: 100%;", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => log.SerialNumber, string.Empty, new { @class = "alert-danger edit_validation" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => log.SerialNumbers, new { @class = "control-label" })
+                                @Html.HiddenFor(model => log.SerialNumbers, new { @class = "edit_input" })
+
+                                <textarea id="edit_tagEditor"></textarea>
+
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => log.Comments, new { @class = "control-label" })
+                                @Html.TextAreaFor(model => log.Comments, new { @class = "form-control edit_input", style = "width: 100%; max-width: 100%;", autocomplete = "off" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer no-border">
+                    @Html.HiddenFor(model => log.ID, new { @class = "edit_input" })
+                    <button type="submit" class="btn btn-default">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="load_modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Loading...</h4>
+            </div>
+            <div class="modal-body">
+                <h4>Please wait</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="error_modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Error Message</h4>
+            </div>
+            <div class="modal-body">
+                <h4 id="error_msg"></h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/tagEditor")
+
+    <script>
+        function refreshFiles() {
+            $.get(
+                '@Url.HttpRouteUrl("DefaultApi", new { controller = "Measurement", action = "GetFiles" })',
+
+                function (res) {
+                    var table = $("#file_table").DataTable();
+                    table.clear().rows().draw();
+                    setTimeout(function () { table.clear().rows.add(res).draw(); }, 250);
+                }
+            );
+        }
+
+        $(document).ready(function () {
+            $("#create_tagEditor").tagEditor({
+                delimiter: ", ",
+                onChange: function (field, editor, tags) {
+                    $("#create_SkippedSerialNumbers").val(JSON.stringify(tags));
+                }
+            });
+
+            $("#manual_tagEditor").tagEditor({
+                delimiter: ", ",
+                onChange: function (field, editor, tags) {
+                    $("#manual_SkippedSerialNumbers").val(JSON.stringify(tags));
+                }
+            });
+
+            $("#edit_tagEditor").tagEditor({
+                delimiter: ", ",
+                onChange: function (field, editor, tags) {
+                    $("#log_SerialNumbers").val(JSON.stringify(tags));
+                }
+            });
+
+            $("#log_table").DataTable({
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "order": [[0, "desc"]]
+            });
+
+            $("#file_table").DataTable({
+                "lengthMenu": [[-1, 10, 25, 50], ["All", 10, 25, 50]],
+                "order": [[1, "desc"]],
+                "columns": [
+                    {
+                        "data": "fileName"
+                    },
+                    {
+                        "data": "dateCreated",
+
+                        "render": function (data, type, row, meta) {
+                            if (type !== 'display')
+                                return moment(data).format("YYYY-MM-DD HH:mm");
+
+                            return moment(data).format("h:mm A");
+                        }
+                    },
+                    {
+                        "data": "fileName",
+
+                        "render": function (data, type, row, meta) {
+                            if (type !== 'display')
+                                return data;
+
+                            return "<button type='button' class='btn btn-xs btn-primary file_select' data-filename='" + data + "'>Select File</button>";
+                        }
+                    }
+                ]
+            });
+
+            refreshFiles();
+
+            $(".refresh").click(function () {
+                var btn = $(this);
+                btn.addClass('loading');
+
+                setTimeout(function () {
+                    btn.removeClass('loading');
+                }, 2000);
+
+                setTimeout(function () { refreshFiles(); }, 1650);
+            });
+
+            $("#file_table").on("click", ".file_select", function () {
+                $(".create_input").val([]);
+                $(".create_validation").empty();
+
+                $("#create_tagEditor").tagEditor('destroy');
+                $("#create_tagEditor").val('');
+
+                $("#create_tagEditor").tagEditor({
+                    delimiter: ", ",
+                    onChange: function (field, editor, tags) {
+                        $("#create_SkippedSerialNumbers").val(JSON.stringify(tags));
+                    }
+                });
+
+                var filename = $(this).data('filename');
+                $("#create_SelectedFile").val(filename);
+
+                $("#create_modal").modal('show');
+            });
+
+            $('#create_modal').on('shown.bs.modal', function (e) {
+                $(".create_focus").focus();
+            })
+
+            $("#btn-manual").click(function () {
+                $(".manual_input").val([]);
+                $(".manual_validation").empty();
+
+                $("#manual_tagEditor").tagEditor('destroy');
+                $("#manual_tagEditor").val('');
+                $("#manual_tagEditor").tagEditor({
+                    delimiter: ", ",
+                    onChange: function (field, editor, tags) {
+                        $("#manual_SkippedSerialNumbers").val(JSON.stringify(tags));
+                    }
+                });
+
+                $("#manual_modal").modal('show');
+            });
+
+            $(".log_edit").click(function () {
+                $(".edit_input").val([]);
+                $(".edit_validation").empty();
+
+                var log = $(this).data('log');
+
+                $.each(log, function (name, value) {
+                    var target = $("#log_" + name);
+
+                    if (target.is(':checkbox'))
+                        target.prop('checked', value);
+                    else
+                        target.val(value);
+                });
+
+                $("#edit_tagEditor").tagEditor('destroy');
+                $("#edit_tagEditor").val('');
+                $("#edit_tagEditor").tagEditor({
+                    delimiter: ", ",
+                    onChange: function (field, editor, tags) {
+                        $("#log_SerialNumbers").val(JSON.stringify(tags));
+                    }
+                });
+
+                var skipped = $(this).data('skipped');
+                $.each(skipped, function (_, e) {
+                    $("#edit_tagEditor").tagEditor('addTag', e, true);
+                })
+
+                $("#edit_modal").modal('show');
+            });
+
+            $("#create_form").submit(function (e) {
+                e.preventDefault();
+
+                if (!$(this).valid())
+                    return;
+
+                $("#load_modal").modal('show');
+
+                $.post(
+                    '@Url.Action("Create", "Log", null, Request.Url.Scheme)',
+                    {
+                        'SelectedFile': $("#create_SelectedFile").val(),
+                        'JobNumber': $("#create_JobNumber").val(),
+                        'EmployeeID': $("#create_EmployeeID").val(),
+                        'SerialNumber': $("#create_SerialNumber").val(),
+                        'Comments': $("#create_Comments").val(),
+                        'SkippedSerialNumbers': $("#create_SkippedSerialNumbers").val(),
+                    },
+                    function (res) {
+                        $("#load_modal").modal('hide');
+
+                        if (!res)
+                            return window.location.reload();
+
+                        $("#error_msg").html(res);
+                        $("#error_modal").modal('show');
+                    }
+                );
+            });
+
+            $("#manual_form").submit(function (e) {
+                e.preventDefault();
+
+                if (!$(this).valid())
+                    return;
+
+                $("#load_modal").modal('show');
+
+                var fileUpload = $("#manual_UploadedFile").get(0);
+                var files = fileUpload.files;
+
+                var data = new FormData();
+
+                data.append('UploadedFile', files[0]);
+                data.append('JobNumber', $("#manual_JobNumber").val());
+                data.append('EmployeeID', $("#manual_EmployeeID").val());
+                data.append('SerialNumber', $("#manual_SerialNumber").val());
+                data.append('Comments', $("#manual_Comments").val());
+                data.append('SkippedSerialNumbers', $("#manual_SkippedSerialNumbers").val());
+
+                $.ajax({
+                    url: '@Url.Action("Manual", "Log", null, Request.Url.Scheme)',
+                    method: 'POST',
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (res) {
+                        $("#load_modal").modal('hide');
+
+                        if (!res)
+                            return window.location.reload();
+
+                        $("#error_msg").html(res);
+                        $("#error_modal").modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        $("#error_msg").html(error);
+                        $("#error_modal").modal('show');
+                    }
+                });
+            });
+
+            $("#edit_form").submit(function (e) {
+                e.preventDefault();
+
+                if (!$(this).valid())
+                    return;
+
+                $("#load_modal").modal('show');
+
+                $.post(
+                    '@Url.Action("Edit", "Log", null, Request.Url.Scheme)',
+                    {
+                        'ID': $("#log_ID").val(),
+                        'UploadName': $("#log_UploadName").val(),
+                        'JobNumber': $("#log_JobNumber").val(),
+                        'Operator': $("#log_Operator").val(),
+                        'SerialNumber': $("#log_SerialNumber").val(),
+                        'Comments': $("#log_Comments").val(),
+                        'SerialNumbers': $("#log_SerialNumbers").val(),
+                    },
+                    function (res) {
+                        $("#load_modal").modal('hide');
+
+                        if (!res)
+                            return window.location.reload();
+
+                        $("#error_msg").html(res);
+                        $("#error_modal").modal('show');
+                    }
+                );
+            });
+        });
+    </script>
+}
