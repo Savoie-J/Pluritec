@@ -1,0 +1,130 @@
+﻿@using P.Data.Models;
+@using P.Web.Models;
+
+@model Search
+@{
+    ViewBag.Title = "Search";
+    Log log = new Log();
+}
+
+<style>
+    .mainbtn {
+        padding: 10px 160px;
+        margin-bottom: 15px;
+    }
+
+        .mainbtn:hover {
+            transition: 816ms;
+            padding: 10px 320px;
+        }
+</style>
+
+<br />
+<div class="container">
+    @using (Html.BeginForm())
+    {
+        <p style="text-align: center">
+            <button type="submit" class="mainbtn"> Search </button>
+        </p>
+
+        <table class="table table-bordered">
+            <tr>
+                <th style="text-align: center; vertical-align: middle">
+                    @Html.LabelFor(model => model.UseJobNumber)
+                    <br />
+                    @Html.CheckBoxFor(model => model.UseJobNumber, new { @style = "width:40px; height:20px;" })
+                </th>
+                <td style="text-align: center; vertical-align: middle">
+                    @Html.EditorFor(model => model.JobNumber, new { htmlAttributes = new { @class = "form-control", style = "width: 100%; max-width: 100%;", } })
+                </td>
+
+                <th style="text-align: center;">
+                    @Html.LabelFor(model => model.UseLogDate)
+                    <br />
+                    @Html.CheckBoxFor(model => model.UseLogDate, new { @style = "width:40px; height:20px;" })
+                </th>
+                <td style="text-align: center" colspan="3">
+                    @Html.EditorFor(model => model.LogDateMin, new { htmlAttributes = new { @class = "form-control", style = "width: 100%; max-width: 100%;", type = "date" } })
+                    @Html.EditorFor(model => model.LogDateMax, new { htmlAttributes = new { @class = "form-control", style = "width: 100%; max-width: 100%;", type = "date" } })
+                </td>
+            </tr>
+
+            <tr>
+                <th style="text-align: center; vertical-align: middle">
+                    @Html.LabelFor(model => model.UsePartNumber)
+                    <br />
+                    @Html.CheckBoxFor(model => model.UsePartNumber, new { @style = "width:40px; height:20px;" })
+                </th>
+                <td style="text-align: center; vertical-align: middle">
+                    @Html.EditorFor(model => model.PartNumber, new { htmlAttributes = new { @class = "form-control", style = "width: 100%; max-width: 100%;", } })
+                </td>
+
+                <th style="text-align: center; vertical-align: middle">
+                    @Html.LabelFor(model => model.UseComments)
+                    <br />
+                    @Html.CheckBoxFor(model => model.UseComments, new { @style = "width:40px; height:20px;" })
+                </th>
+                <td style="text-align: center; vertical-align: middle">
+                    @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control", style = "width: 100%; max-width: 100%;", } })
+                </td>
+            </tr>
+        </table>
+    }
+</div>
+<br />
+
+<table class="table table-bordered table-striped" id="search_table">
+    <thead>
+        <tr>
+            <th style="text-align: center;">
+                @Html.DisplayNameFor(model => log.LogDate)
+            </th>
+            <th style="text-align: center;">
+                @Html.DisplayNameFor(model => log.UploadName)
+            </th>
+            <th style="text-align: center;">
+                @Html.DisplayNameFor(model => log.PartNumber)
+            </th>
+            <th style="text-align: center;">
+                @Html.DisplayNameFor(model => log.JobNumber)
+            </th>
+            <th style="text-align: center;">
+                @Html.DisplayNameFor(model => log.Comments)
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.Results)
+        {
+            <tr>
+                <td style="text-align: center; vertical-align: middle;" data-order="@item.LogDate.ToString("yyyy-MM-dd HH:mm:ss")">
+                    @item.LogDate.ToShortDateString()
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    @Html.DisplayFor(modelItem => item.UploadName)
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    @Html.DisplayFor(modelItem => item.PartNumber)
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    @Html.DisplayFor(modelItem => item.JobNumber)
+                </td>
+                <td style="text-align: center; vertical-align: middle;" class="comments">
+                    @item.Comments
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#search_table").DataTable({
+                "lengthMenu": [[-1, 10, 25, 50], ["All", 10, 25, 50]],
+                "order": [[0, "desc"]]
+            });
+        });
+    </script>
+}

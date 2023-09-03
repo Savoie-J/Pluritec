@@ -149,6 +149,7 @@
     <Compile Include="Models\LayerData.cs" />
     <Compile Include="Models\ManualViewModel.cs" />
     <Compile Include="Models\MeasurementViewModel.cs" />
+    <Compile Include="Models\Search.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +211,7 @@
     <Content Include="Views\Shared\EditorTemplates\HttpPostedFileBase.cshtml" />
     <Content Include="Scripts\moment.min.js.map" />
     <Content Include="Scripts\moment-with-locales.min.js.map" />
+    <Content Include="Views\Log\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Databases\" />

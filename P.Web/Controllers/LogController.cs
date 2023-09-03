@@ -240,5 +240,43 @@ namespace P.Web.Controllers
                 return ex.Message;
             }
         }
+
+        public ActionResult Search(Search search)
+        {
+            IQueryable<Log> results = _sql.Logs;
+
+            if (search.UseLogDate)
+            {
+                if (search.LogDateMin.HasValue)
+                {
+                    results = results.Where(l => l.LogDate >= search.LogDateMin);
+                }
+
+                if (search.LogDateMax.HasValue)
+                {
+                    results = results.Where(l => l.LogDate <= search.LogDateMax);
+                }
+            }
+
+            if (search.UseJobNumber)
+            {
+                results = results.Where(l => l.JobNumber.Contains(search.JobNumber));
+            }
+
+            if (search.UseComments)
+            {
+                results = results.Where(l => l.Comments.Contains(search.Comments));
+            }
+
+            if (search.UsePartNumber)
+            {
+                results = results.Where(l => l.Specification.PartNumber.Contains(search.PartNumber));
+            }
+
+            if (!string.Equals(results, _sql.Logs))
+                search.Results = results.ToList();
+
+            return View(search);
+        }
     }
 }
