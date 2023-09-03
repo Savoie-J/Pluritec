@@ -212,6 +212,7 @@
     <Content Include="Scripts\moment.min.js.map" />
     <Content Include="Scripts\moment-with-locales.min.js.map" />
     <Content Include="Views\Log\Search.cshtml" />
+    <Content Include="Views\Admin\Undefined.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Databases\" />

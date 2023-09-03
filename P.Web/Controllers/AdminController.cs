@@ -118,5 +118,64 @@ namespace P.Web.Controllers
                 skipped = log.SkippedSerialNumbers.Select(s => s.SerialNumber)
             }, JsonRequestBehavior.AllowGet);
         }
+
+        public async Task<ActionResult> Undefined()
+        {
+            List<Specification> specifications = await _sql.Specifications
+                .Where(s => !s.LayerOne.HasValue
+                         && !s.LayerTwo.HasValue
+                         && !s.Tolerance.HasValue
+                         && !s.Offset.HasValue)
+                .ToListAsync();
+
+            return View(specifications);
+        }
+
+        [HttpPost]
+        public string Undefined(Specification specification)
+        {
+            try
+            {
+                if (specification == null)
+                    return "Invalid form submission.";
+
+                ModelState.Remove("ID");
+
+                if (!specification.LayerOne.HasValue)
+                    ModelState.AddModelError("LayerOne", "Layer One is required.");
+
+                if (!specification.LayerTwo.HasValue)
+                    ModelState.AddModelError("LayerTwo", "Layer Two is required.");
+
+                if (!specification.Offset.HasValue)
+                    ModelState.AddModelError("Offset", "Offset is required.");
+
+                if (!specification.Tolerance.HasValue)
+                    ModelState.AddModelError("Tolerance", "Tolerance is required.");
+
+                if (!ModelState.IsValid)
+                    return string.Join("<br>", ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)));
+
+                Specification saving = _sql.Specifications.FirstOrDefault(s => s.PartNumber == specification.PartNumber);
+                if (saving == null)
+                    saving = _sql.Specifications.Add(new Specification
+                    {
+                        PartNumber = specification.PartNumber
+                    });
+
+                saving.LayerOne = specification.LayerOne;
+                saving.LayerTwo = specification.LayerTwo;
+                saving.Tolerance = specification.Tolerance;
+                saving.Offset = specification.Offset;
+
+                _sql.SaveChanges();
+
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
     }
 }
